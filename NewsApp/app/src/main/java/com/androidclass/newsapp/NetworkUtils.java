@@ -15,12 +15,10 @@ import static android.content.ContentValues.TAG;
 
 public class NetworkUtils {
 
-    public static String base_url;
-    public static String query_parameter;
 
-    NetworkUtils(String baseURL, String queryParameter){
-        base_url = baseURL;
-        query_parameter = queryParameter;
+
+    NetworkUtils(){
+
     }
 
     private static final String baseUrl = "https://newsapi.org/v1/articles";
