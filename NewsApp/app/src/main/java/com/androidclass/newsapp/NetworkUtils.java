@@ -29,7 +29,7 @@ public class NetworkUtils {
     private static final String apiKeyParam = "apiKey";
     private static final String apiKey = "7fea95368f82446c9c3dfd8ccb399572";
 
-    public static URL buildUrl(String locationQuery) {
+    public static URL buildUrl() {
         Uri builtUri = Uri.parse(baseUrl).buildUpon()
                 .appendQueryParameter(sourceParam, source)
                 .appendQueryParameter(sortParam, sort)
