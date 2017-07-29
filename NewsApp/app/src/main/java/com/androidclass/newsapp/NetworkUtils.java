@@ -3,24 +3,26 @@ package com.androidclass.newsapp;
 import android.net.Uri;
 import android.util.Log;
 
+import com.androidclass.newsapp.model.Item;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import static android.content.ContentValues.TAG;
 
 public class NetworkUtils {
 
-
-
-    NetworkUtils(){
-
-    }
-
+    //URL Looks like the below
+    //https://newsapi.org/v1/articles?source=the-next-web&sortBy=latest&apiKey=7fea95368f82446c9c3dfd8ccb399572
     private static final String baseUrl = "https://newsapi.org/v1/articles";
     private static final String sourceParam = "source";
     private static final String source = "the-next-web";
@@ -48,24 +50,42 @@ public class NetworkUtils {
         return url;
     }
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException{
+    public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        try{
+        try {
             InputStream in = urlConnection.getInputStream();
 
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
+            Scanner input = new Scanner(in);
+            input.useDelimiter("\\A");
 
-            boolean hasInput = scanner.hasNext();
-            if(hasInput){
-                return scanner.next();
-            }else{
-                return null;
-            }
+            String result = (input.hasNext()) ? input.next() : null;
+            return result;
+
+        }catch (IOException e){
+            e.printStackTrace();
         } finally {
             urlConnection.disconnect();
         }
-
+        return null;
     }
 
+    public static ArrayList<Item> parseJSON(String json) throws JSONException {
+        ArrayList<Item> result = new ArrayList<>();
+        JSONObject main = new JSONObject(json);
+        JSONArray items = main.getJSONArray("articles");
+
+        for(int i = 0; i < items.length(); i++){
+            JSONObject item = items.getJSONObject(i);
+            String author = item.getString("author");
+            String title = item.getString("title");
+            String description = item.getString("description");
+            String url = item.getString("url");
+            String urlToImage = item.getString("urlToImage");
+            String publishedAt= item.getString("publishedAt");
+
+            result.add(new Item(author,  title,  description,  url,  urlToImage,  publishedAt));
+        }
+        Log.d(TAG, "final items size: " + result.size());
+        return result;
+    }
 }
